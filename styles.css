@@ -1,0 +1,335 @@
+/* ==========================================================================
+   NEXOS WEB — Corporate Fintech & POS Stylesheet
+   ========================================================================== */
+
+:root {
+  --bg-dark: #07050f;
+  --bg-card: #100c1e;
+  --bg-elevated: #17122b;
+  --border-subtle: rgba(139, 92, 246, 0.16);
+  --border-strong: rgba(139, 92, 246, 0.38);
+  --purple-primary: #7c3aed;
+  --purple-bright: #9333ea;
+  --emerald-accent: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-dark);
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: #f4f2fc;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #07050f;
+}
+::-webkit-scrollbar-thumb {
+  background: #2c214d;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7c3aed;
+}
+
+/* ================= SCROLL PROGRESS BAR ================= */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #7c3aed, #a855f7, #10b981);
+  z-index: 100;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.8);
+  transition: width 0.08s linear;
+}
+
+/* ================= ARCHITECTURAL GRID BACKGROUND ================= */
+.bg-grid-architect {
+  background-size: 48px 48px;
+  background-image:
+    linear-gradient(to right, rgba(139, 92, 246, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 25%, #000 35%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 25%, #000 35%, transparent 100%);
+}
+
+/* ================= NAVBAR SCROLL STATE ================= */
+#main-header {
+  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, padding 0.35s ease;
+}
+#main-header.scrolled {
+  background-color: rgba(7, 5, 15, 0.92);
+  border-bottom-color: rgba(139, 92, 246, 0.28);
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.75);
+}
+
+/* ================= SCROLL REVEAL CHOREOGRAPHY ================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px) scale(0.985);
+  filter: blur(4px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(36px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.active,
+.reveal-left.active,
+.reveal-right.active {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+  filter: blur(0);
+}
+
+.delay-75 { transition-delay: 75ms; }
+.delay-150 { transition-delay: 150ms; }
+.delay-225 { transition-delay: 225ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+
+/* Hero instant entrance stagger */
+@keyframes heroEnter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hero-animate {
+  animation: heroEnter 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+.hero-delay-1 { animation-delay: 0.08s; }
+.hero-delay-2 { animation-delay: 0.18s; }
+.hero-delay-3 { animation-delay: 0.28s; }
+.hero-delay-4 { animation-delay: 0.38s; }
+.hero-delay-5 { animation-delay: 0.50s; }
+
+/* ================= SHIMMER & MAGNETIC CTA ================= */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.28),
+    transparent
+  );
+  transform: skewX(-22deg);
+  transition: none;
+  animation: shimmerSweep 4.2s infinite ease-in-out;
+}
+@keyframes shimmerSweep {
+  0%, 45% { left: -120%; }
+  75%, 100% { left: 160%; }
+}
+
+/* ================= SPOTLIGHT BENTO CARDS ================= */
+.spotlight-card {
+  position: relative;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  overflow: visible;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  background: radial-gradient(
+    520px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(139, 92, 246, 0.16),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+.spotlight-card:hover {
+  border-color: rgba(139, 92, 246, 0.48);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px -20px rgba(109, 40, 217, 0.35);
+}
+.spotlight-card > :not(.absolute) {
+  position: relative;
+  z-index: 2;
+}
+.spotlight-card > .absolute {
+  z-index: 10;
+}
+
+/* ================= 3D PERSPECTIVE HARDWARE STAGE ================= */
+.tilt-stage {
+  perspective: 1400px;
+}
+.tilt-frame {
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out, box-shadow 0.35s ease;
+  will-change: transform;
+}
+.tilt-float-badge {
+  transform: translateZ(36px);
+  animation: floatBadge 5s ease-in-out infinite;
+}
+.tilt-float-badge-alt {
+  transform: translateZ(44px);
+  animation: floatBadge 6.2s ease-in-out infinite reverse;
+}
+@keyframes floatBadge {
+  0%, 100% { transform: translateY(0px) translateZ(36px); }
+  50% { transform: translateY(-7px) translateZ(36px); }
+}
+
+/* ================= INFINITE MARQUEE TICKER ================= */
+.marquee-wrapper {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 36s linear infinite;
+}
+.marquee-wrapper:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ================= TIMELINE PROGRESS LINE ================= */
+.timeline-line-fill {
+  width: 0%;
+  transition: width 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.timeline-active .timeline-line-fill {
+  width: 100%;
+}
+
+/* ================= SMOOTH FAQ ACCORDION ================= */
+.faq-answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.faq-item.open .faq-answer {
+  grid-template-rows: 1fr;
+}
+.faq-answer-inner {
+  overflow: hidden;
+}
+.faq-chevron {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.faq-item.open .faq-chevron {
+  transform: rotate(180deg);
+}
+
+/* ================= THERMAL RECEIPT PREVIEW ================= */
+.thermal-paper {
+  background: #fafafa;
+  color: #111827;
+  font-family: 'JetBrains Mono', monospace;
+  position: relative;
+}
+.thermal-paper::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-image: linear-gradient(135deg, #fafafa 50%, transparent 50%),
+                    linear-gradient(225deg, #fafafa 50%, transparent 50%);
+  background-size: 12px 8px;
+}
+
+/* ================= FLOATING WHATSAPP PULSE ================= */
+@keyframes pulseWhatsApp {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.72); }
+  70% { box-shadow: 0 0 0 18px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+.pulse-whatsapp {
+  animation: pulseWhatsApp 2.3s infinite;
+}
+
+/* Mobile slide menu */
+#mobile-menu {
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+#mobile-menu.open {
+  max-height: 420px;
+  opacity: 1;
+}
+
+/* Ambient glow utilities */
+.glow-purple {
+  box-shadow: 0 0 80px -20px rgba(124, 58, 237, 0.45);
+}
+.glow-emerald {
+  box-shadow: 0 0 50px -15px rgba(16, 185, 129, 0.35);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-left, .reveal-right, .hero-animate {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
+  .marquee-track {
+    animation: none;
+  }
+}

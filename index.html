@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXOS | Sistema Comercial y Punto de Venta (POS) Bimoneda</title>
+  <meta name="description" content="Software de Punto de Venta (POS), inventario, control de fiao y facturación bimoneda ($ y Bs BCV) para comercios en Venezuela. Funciona con y sin internet.">
+  <meta property="og:title" content="NEXOS | Sistema Comercial y Punto de Venta (POS) Bimoneda">
+  <meta property="og:description" content="Controla tu negocio con factura bimoneda ($ y Bs BCV), inventario, fiao e impresora térmica. Comienza hoy con Plan Gratis.">
+  <meta property="og:image" content="assets/nexos-banner.jpg">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/nexos-icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#F5F3FF',
+              100: '#EDE9FE',
+              200: '#DDD6FE',
+              300: '#C4B5FD',
+              400: '#A78BFA',
+              500: '#8B5CF6',
+              600: '#7C3AED',
+              700: '#6D28D9',
+              800: '#5B21B6',
+              900: '#4C1D95',
+              950: '#2E1065',
+            },
+            surface: {
+              dark: '#07050F',
+              card: '#100C1E',
+              border: '#24193F',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Styles & Motion Choreography -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Scroll Progress Line -->
+  <div id="scroll-progress"></div>
+
+  <!-- ================= TOP LIVE BCV BAR ================= -->
+  <aside aria-label="Información en vivo" class="bg-gradient-to-r from-brand-950 via-[#1b0e38] to-indigo-950 border-b border-brand-800/40 text-xs py-2 px-4 text-center relative z-50">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2.5 flex-wrap">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-bold border border-emerald-500/30 text-[11px]">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="bcv-source-label">Tasa BCV Referencia</span>: <b class="font-mono" data-bcv-rate>896.12</b> Bs./$
+      </span>
+      <span class="text-purple-200/90 text-[11px] sm:text-xs">
+        Nuevo: Empieza hoy con el <b class="text-white">Plan Gratis de hasta 10 productos</b> sin tarjeta de crédito.
+      </span>
+      <a href="#planes" class="font-bold underline text-emerald-300 hover:text-emerald-200 ml-1 text-[11px] sm:text-xs">Ver Planes &rarr;</a>
+    </div>
+  </aside>
+
+  <!-- ================= NAVBAR ================= -->
+  <header id="main-header" class="sticky top-0 z-40 backdrop-blur-xl bg-surface-dark/75 border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+
+      <!-- Logo Oficial NEXOS -->
+      <a href="#" class="flex items-center gap-3 group shrink-0">
+        <img src="assets/nexos-icon.png" alt="Logo NEXOS" class="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl shadow-lg group-hover:scale-105 transition-transform object-cover">
+        <div class="flex flex-col">
+          <span class="font-black text-xl sm:text-2xl tracking-tight text-white leading-none">NEXOS</span>
+          <span class="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-brand-400 mt-1">Punto de Venta POS</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden lg:flex items-center gap-7 text-xs font-bold uppercase tracking-wider text-slate-300">
+        <a href="#demo" class="hover:text-white transition-colors py-1">Sistema en Vivo</a>
+        <a href="#funciones" class="hover:text-white transition-colors py-1">Funcionalidades</a>
+        <a href="#pasos" class="hover:text-white transition-colors py-1">Instalación</a>
+        <a href="#planes" class="hover:text-white transition-colors py-1">Planes y Precios</a>
+        <a href="#faq" class="hover:text-white transition-colors py-1">Preguntas</a>
+      </nav>
+
+      <!-- Desktop Actions + Mobile Menu Button -->
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <a href="https://wa.me/584129062790?text=Hola,%20deseo%20una%20demostracion%20del%20sistema%20NEXOS%20para%20mi%20negocio" target="_blank"
+          class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-emerald-500/30 text-emerald-300 bg-emerald-950/30 hover:bg-emerald-900/40 text-xs font-bold transition-all">
+          <i data-lucide="message-circle" class="h-4 w-4 text-emerald-400"></i>
+          <span>0412-9062790</span>
+        </a>
+        <a href="#planes"
+          class="btn-shimmer inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-brand-700/30 transition-all hover:scale-105">
+          <span>Probar Gratis</span>
+          <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+        </a>
+        <button id="mobile-menu-btn" type="button" aria-label="Abrir menú móvil"
+          class="lg:hidden p-2 rounded-xl border border-surface-border bg-surface-card text-slate-300 hover:text-white">
+          <i data-lucide="menu" class="h-5 w-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="lg:hidden border-t border-surface-border bg-surface-dark/95 backdrop-blur-xl px-4">
+      <div class="py-4 flex flex-col gap-2 text-sm font-bold text-slate-300">
+        <a href="#demo" class="py-2.5 px-3 rounded-xl hover:bg-surface-card hover:text-white">Simulador del Sistema</a>
+        <a href="#funciones" class="py-2.5 px-3 rounded-xl hover:bg-surface-card hover:text-white">Funcionalidades Clave</a>
+        <a href="#pasos" class="py-2.5 px-3 rounded-xl hover:bg-surface-card hover:text-white">Cómo Instalar</a>
+        <a href="#planes" class="py-2.5 px-3 rounded-xl hover:bg-surface-card hover:text-white">Planes y Precios</a>
+        <a href="#faq" class="py-2.5 px-3 rounded-xl hover:bg-surface-card hover:text-white">Preguntas Frecuentes</a>
+        <a href="https://wa.me/584129062790?text=Hola,%20deseo%20informacion%20de%20NEXOS" target="_blank"
+          class="mt-2 py-3 px-4 rounded-xl bg-emerald-600 text-white text-center font-extrabold flex items-center justify-center gap-2">
+          <i data-lucide="message-circle" class="h-4 w-4"></i>
+          <span>Escribir al WhatsApp 0412-9062790</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION WITH 3D HARDWARE STAGE ================= -->
+  <section class="relative pt-14 sm:pt-20 pb-20 overflow-hidden">
+    <!-- Clean Architectural Grid Backdrop & Glows -->
+    <div class="pointer-events-none absolute inset-0 bg-grid-architect"></div>
+    <div class="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[820px] h-[520px] bg-brand-600/18 rounded-full blur-[140px]"></div>
+    <div class="pointer-events-none absolute top-1/3 -right-24 w-[420px] h-[360px] bg-emerald-500/10 rounded-full blur-[130px]"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+
+      <!-- Trust Pill -->
+      <div class="hero-animate hero-delay-1 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-card/90 border border-brand-500/35 text-xs font-bold text-brand-200 mb-6 shadow-lg">
+        <i data-lucide="shield-check" class="h-4 w-4 text-emerald-400"></i>
+        <span>Software Comercial &amp; Caja Registradora para Venezuela</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="hero-animate hero-delay-2 text-4xl sm:text-6xl lg:text-[4.25rem] font-black tracking-tight text-white max-w-5xl mx-auto leading-[1.06]">
+        Cobra en <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-purple-200 to-emerald-300">Dólares y Bolívares</span> sin Perder un Centavo
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="hero-animate hero-delay-3 mt-6 text-base sm:text-xl text-slate-300 max-w-3xl mx-auto font-medium leading-relaxed">
+        Sistema Punto de Venta (POS) bimoneda con tasa oficial BCV automática, pagos mixtos con vuelto exacto, control de fiao e inventario. Diseñado para seguir facturando <strong class="text-white">incluso si se va el internet o la luz</strong>.
+      </p>
+
+      <!-- Action CTAs -->
+      <div class="hero-animate hero-delay-4 mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#planes"
+          class="btn-shimmer w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-600 text-white font-black text-sm sm:text-base shadow-xl shadow-brand-700/40 hover:scale-[1.03] transition-transform flex items-center justify-center gap-2.5">
+          <span>Comenzar Plan Gratis (10 Productos)</span>
+          <i data-lucide="arrow-right" class="h-5 w-5"></i>
+        </a>
+        <a href="#demo"
+          class="w-full sm:w-auto px-8 py-4 rounded-2xl border border-surface-border bg-surface-card/90 hover:bg-surface-border text-slate-100 font-extrabold text-sm sm:text-base transition-all flex items-center justify-center gap-2.5">
+          <i data-lucide="play-circle" class="h-5 w-5 text-brand-400"></i>
+          <span>Probar Simulador en Vivo</span>
+        </a>
+      </div>
+
+      <!-- Key Metrics Strip (Animated Counters on Scroll) -->
+      <div class="hero-animate hero-delay-5 mt-14 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto">
+        <div class="spotlight-card p-4 sm:p-5 rounded-2xl text-left">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Plan Inicial</span>
+            <i data-lucide="package" class="h-4 w-4 text-brand-400"></i>
+          </div>
+          <p class="text-2xl sm:text-3xl font-black font-mono text-white mt-1.5" data-count-to="10" data-suffix=" Prod.">10 Prod.</p>
+          <p class="text-[11px] text-emerald-400 font-semibold mt-0.5">Gratis para siempre ($0)</p>
+        </div>
+
+        <div class="spotlight-card p-4 sm:p-5 rounded-2xl text-left">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Conversión BCV</span>
+            <i data-lucide="refresh-cw" class="h-4 w-4 text-emerald-400"></i>
+          </div>
+          <p class="text-2xl sm:text-3xl font-black font-mono text-emerald-400 mt-1.5" data-bcv-rate>896.12</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-0.5">Bs./USD actualizada en vivo</p>
+        </div>
+
+        <div class="spotlight-card p-4 sm:p-5 rounded-2xl text-left">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sin Internet</span>
+            <i data-lucide="wifi-off" class="h-4 w-4 text-amber-400"></i>
+          </div>
+          <p class="text-2xl sm:text-3xl font-black font-mono text-white mt-1.5" data-count-to="99.9" data-decimals="1" data-suffix="%">99.9%</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-0.5">Operación offline garantizada</p>
+        </div>
+
+        <div class="spotlight-card p-4 sm:p-5 rounded-2xl text-left">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Impresión POS</span>
+            <i data-lucide="printer" class="h-4 w-4 text-cyan-400"></i>
+          </div>
+          <p class="text-2xl sm:text-3xl font-black font-mono text-white mt-1.5">58 / 80mm</p>
+          <p class="text-[11px] text-slate-400 font-semibold mt-0.5">Compatible térmico USB/BT</p>
+        </div>
+      </div>
+
+      <!-- 3D INTERACTIVE HARDWARE SHOWCASE STAGE -->
+      <div id="hero-tilt-stage" class="tilt-stage reveal mt-14 max-w-5xl mx-auto">
+        <div id="hero-tilt-frame" class="tilt-frame relative rounded-3xl border border-brand-500/40 bg-surface-card shadow-2xl glow-purple p-2 sm:p-3">
+          <div class="relative rounded-2xl overflow-hidden">
+            <img src="hero-pos.jpg" alt="Terminal Punto de Venta NEXOS con impresora térmica y escáner USB" class="w-full h-auto object-cover max-h-[520px]" loading="eager">
+            <div class="absolute inset-0 bg-gradient-to-t from-surface-dark/90 via-transparent to-surface-dark/20"></div>
+          </div>
+
+          <!-- Floating Parallax Badge Top Left -->
+          <div class="hidden md:flex tilt-float-badge absolute -top-5 -left-4 items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-surface-dark/90 backdrop-blur-xl border border-emerald-500/40 shadow-2xl">
+            <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <div class="text-left">
+              <p class="text-[10px] uppercase font-bold text-slate-400">Tasa Oficial Conectada</p>
+              <p class="text-xs font-mono font-black text-emerald-400">1 USD = <span data-bcv-rate>896.12</span> Bs.</p>
+            </div>
+          </div>
+
+          <!-- Floating Parallax Badge Bottom Right -->
+          <div class="hidden md:flex tilt-float-badge-alt absolute -bottom-5 -right-4 items-center gap-3 px-4 py-3 rounded-2xl bg-surface-dark/95 backdrop-blur-xl border border-brand-500/40 shadow-2xl">
+            <div class="h-9 w-9 rounded-xl bg-brand-600/25 border border-brand-500/40 flex items-center justify-center text-brand-300">
+              <i data-lucide="receipt" class="h-5 w-5"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-extrabold text-white">Pago Mixto Registrado · #0482</p>
+              <p class="text-[11px] text-emerald-400 font-mono font-bold">$10.00 Efectivo + Pago Móvil Bs.</p>
+            </div>
+          </div>
+
+          <!-- Bottom Bar Overlay -->
+          <div class="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 flex items-center justify-between flex-wrap gap-2 pointer-events-none">
+            <div class="bg-black/75 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 text-left">
+              <p class="text-xs font-extrabold text-white">Compatible con PC Windows, Laptops, Tablets y Cajas Táctiles</p>
+              <p class="text-[11px] text-slate-300 hidden sm:block">Instalación remota o presencial en minutos · Respaldo automático</p>
+            </div>
+            <span class="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs shadow-lg">
+              ✓ Listo para Tu Tienda
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= INFINITE MARQUEE STRIP ================= -->
+  <section aria-label="Rubros compatibles" class="py-6 border-y border-white/10 bg-surface-card/40 overflow-hidden">
+    <div class="marquee-wrapper">
+      <div class="marquee-track flex items-center gap-8 text-xs font-extrabold uppercase tracking-widest text-slate-400">
+        <!-- Set 1 -->
+        <span class="flex items-center gap-2 text-white"><i data-lucide="store" class="h-4 w-4 text-brand-400"></i> Bodegas &amp; Abastos</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2"><i data-lucide="shopping-basket" class="h-4 w-4 text-emerald-400"></i> Minimarkets &amp; Supermercados</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2 text-white"><i data-lucide="wrench" class="h-4 w-4 text-amber-400"></i> Ferreterías</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2"><i data-lucide="pill" class="h-4 w-4 text-cyan-400"></i> Farmacias</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2 text-white"><i data-lucide="shirt" class="h-4 w-4 text-purple-400"></i> Tiendas de Ropa &amp; Calzado</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2"><i data-lucide="coffee" class="h-4 w-4 text-rose-400"></i> Cafeterías &amp; Panaderías</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2 text-white"><i data-lucide="car" class="h-4 w-4 text-indigo-400"></i> Repuestos Automotrices</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2"><i data-lucide="truck" class="h-4 w-4 text-emerald-400"></i> Distribuidoras Mayoristas</span>
+        <span class="text-brand-600">&bull;</span>
+        <!-- Set 2 duplicate for seamless loop -->
+        <span class="flex items-center gap-2 text-white"><i data-lucide="store" class="h-4 w-4 text-brand-400"></i> Bodegas &amp; Abastos</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2"><i data-lucide="shopping-basket" class="h-4 w-4 text-emerald-400"></i> Minimarkets &amp; Supermercados</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2 text-white"><i data-lucide="wrench" class="h-4 w-4 text-amber-400"></i> Ferreterías</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2"><i data-lucide="pill" class="h-4 w-4 text-cyan-400"></i> Farmacias</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2 text-white"><i data-lucide="shirt" class="h-4 w-4 text-purple-400"></i> Tiendas de Ropa &amp; Calzado</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2"><i data-lucide="coffee" class="h-4 w-4 text-rose-400"></i> Cafeterías &amp; Panaderías</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2 text-white"><i data-lucide="car" class="h-4 w-4 text-indigo-400"></i> Repuestos Automotrices</span>
+        <span class="text-brand-600">&bull;</span>
+        <span class="flex items-center gap-2"><i data-lucide="truck" class="h-4 w-4 text-emerald-400"></i> Distribuidoras Mayoristas</span>
+        <span class="text-brand-600">&bull;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INTERACTIVE 4-TAB SUITE SHOWCASE ================= -->
+  <section id="demo" class="py-24 relative">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="reveal text-center max-w-3xl mx-auto mb-10">
+        <span class="text-xs uppercase font-extrabold tracking-widest text-brand-400">Prueba el Sistema Aquí Mismo</span>
+        <h2 class="text-3xl sm:text-5xl font-black text-white mt-2">Explora cada módulo por dentro</h2>
+        <p class="text-sm sm:text-base text-slate-400 mt-3">
+          Cambia entre las pestañas abajo para probar la Caja POS con cobro mixto, simular un corte de internet, revisar el fiao en dólares o ver tus ganancias del día.
+        </p>
+      </div>
+
+      <!-- Suite Selector Tabs -->
+      <div class="reveal delay-75 flex flex-wrap items-center justify-center gap-2 mb-6">
+        <button type="button" data-suite-tab="pos"
+          class="px-4 py-2.5 rounded-2xl border border-brand-400 bg-brand-600 text-white text-xs font-extrabold shadow-lg flex items-center gap-2 transition-all">
+          <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+          <span>1. Caja POS &amp; Cobro Mixto</span>
+        </button>
+        <button type="button" data-suite-tab="offline"
+          class="px-4 py-2.5 rounded-2xl border border-surface-border bg-surface-dark/70 text-slate-400 hover:text-white text-xs font-extrabold flex items-center gap-2 transition-all">
+          <i data-lucide="wifi-off" class="h-4 w-4"></i>
+          <span>2. Simulador Sin Internet</span>
+        </button>
+        <button type="button" data-suite-tab="fiao"
+          class="px-4 py-2.5 rounded-2xl border border-surface-border bg-surface-dark/70 text-slate-400 hover:text-white text-xs font-extrabold flex items-center gap-2 transition-all">
+          <i data-lucide="users" class="h-4 w-4"></i>
+          <span>3. Control de Fiao</span>
+        </button>
+        <button type="button" data-suite-tab="analytics"
+          class="px-4 py-2.5 rounded-2xl border border-surface-border bg-surface-dark/70 text-slate-400 hover:text-white text-xs font-extrabold flex items-center gap-2 transition-all">
+          <i data-lucide="bar-chart-3" class="h-4 w-4"></i>
+          <span>4. Arqueo y Ganancias</span>
+        </button>
+      </div>
+
+      <!-- App Window Frame -->
+      <div class="reveal delay-150 rounded-3xl border border-brand-500/35 bg-surface-card shadow-2xl overflow-hidden glow-purple relative">
+
+        <!-- App Window Header Bar -->
+        <div class="bg-[#090612] px-4 sm:px-6 py-3.5 border-b border-surface-border flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <span class="h-3 w-3 rounded-full bg-rose-500/80"></span>
+            <span class="h-3 w-3 rounded-full bg-amber-500/80"></span>
+            <span class="h-3 w-3 rounded-full bg-emerald-500/80"></span>
+            <span class="text-xs font-mono font-bold text-slate-400 ml-2">NEXOS Desktop v2.6 · Modo Demostración Interactiva</span>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs">
+            <label for="sim-rate-input" class="text-slate-400 font-semibold hidden sm:inline">Editar Tasa BCV:</label>
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/35">
+              <span class="text-emerald-400 font-bold text-[11px]">Bs.</span>
+              <input id="sim-rate-input" type="number" step="0.01" value="896.12"
+                class="w-20 bg-transparent text-emerald-300 font-mono font-black text-xs focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB PANEL 1: INTERACTIVE POS & MIXED CHECKOUT -->
+        <div data-suite-panel="pos" class="relative">
+          <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-surface-border">
+
+            <!-- Catalog Side (7 Cols) -->
+            <div class="lg:col-span-7 p-5 sm:p-6 space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 justify-between">
+                <div class="relative flex-1">
+                  <i data-lucide="search" class="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                  <input id="pos-search-input" type="text" placeholder="Buscar producto o SKU..."
+                    class="w-full h-10 pl-9 pr-3 rounded-xl bg-surface-dark border border-surface-border text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-500">
+                </div>
+                <button type="button" onclick="window.nexosScanRandom()"
+                  class="h-10 px-3.5 rounded-xl bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25 text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all active:scale-95">
+                  <i data-lucide="scan-barcode" class="h-4 w-4"></i>
+                  <span>Simular Pistola Lectora</span>
+                </button>
+              </div>
+
+              <!-- Categories -->
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <button type="button" data-pos-cat="Todos" class="px-3 py-1 rounded-lg bg-brand-600 text-white text-[11px] font-bold transition-colors">Todos</button>
+                  <button type="button" data-pos-cat="Abarrotes" class="px-3 py-1 rounded-lg bg-surface-dark text-slate-400 hover:text-white text-[11px] font-bold transition-colors">Abarrotes</button>
+                  <button type="button" data-pos-cat="Bebidas" class="px-3 py-1 rounded-lg bg-surface-dark text-slate-400 hover:text-white text-[11px] font-bold transition-colors">Bebidas</button>
+                  <button type="button" data-pos-cat="Lácteos" class="px-3 py-1 rounded-lg bg-surface-dark text-slate-400 hover:text-white text-[11px] font-bold transition-colors">Lácteos</button>
+                </div>
+                <span id="pos-scan-feedback" class="text-[11px] font-bold text-cyan-300 opacity-0 transition-opacity duration-300"></span>
+              </div>
+
+              <!-- Product Grid -->
+              <div id="pos-catalog-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- Ticket Side (5 Cols) -->
+            <div class="lg:col-span-5 p-5 sm:p-6 bg-surface-dark/45 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-3 border-b border-surface-border">
+                  <div class="flex items-center gap-2">
+                    <span class="font-extrabold text-sm text-white">Ticket #01</span>
+                    <span id="pos-items-count" class="px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-mono text-[10px] font-bold">3 art.</span>
+                  </div>
+                  <button type="button" onclick="window.nexosClearCart()" class="text-xs text-rose-400 hover:text-rose-300 font-bold">Limpiar</button>
+                </div>
+
+                <div id="pos-ticket-list" class="space-y-2 py-3 max-h-60 overflow-y-auto pr-1"></div>
+              </div>
+
+              <div class="pt-4 border-t border-surface-border space-y-3">
+                <div class="flex items-baseline justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total USD:</span>
+                  <span id="pos-total-usd" class="font-mono text-2xl font-black text-white">$5.40</span>
+                </div>
+                <div class="flex items-baseline justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                  <span class="text-xs font-bold text-emerald-400">En Bolívares (BCV):</span>
+                  <span id="pos-total-ves" class="font-mono text-lg font-extrabold text-emerald-400">Bs. 4.839,05</span>
+                </div>
+                <button type="button" onclick="window.nexosOpenCheckout()"
+                  class="btn-shimmer w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95">
+                  <i data-lucide="wallet" class="h-4 w-4"></i>
+                  <span>Probar Cobro Mixto &amp; Ticket (F9)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Mixed Checkout Modal Overlay -->
+          <div id="pos-checkout-modal" class="hidden absolute inset-0 z-20 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-2xl border border-brand-500/50 bg-[#120d24] p-5 shadow-2xl space-y-4">
+              <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div>
+                  <h3 class="text-base font-black text-white">Cobro Mixto Bimoneda</h3>
+                  <p class="text-[11px] text-slate-400">Combina dólares efectivo + Pago Móvil en bolívares</p>
+                </div>
+                <button type="button" onclick="window.nexosCloseCheckout()" class="text-slate-400 hover:text-white p-1">&times;</button>
+              </div>
+
+              <div class="p-3 rounded-xl bg-surface-dark border border-white/10 text-xs flex justify-between items-center">
+                <span class="text-slate-400 font-bold">Total a Cobrar:</span>
+                <span id="checkout-due-usd" class="font-mono font-black text-white"></span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-300 mb-1">Efectivo USD ($)</label>
+                  <input id="pay-usd-input" type="number" step="0.50" min="0"
+                    class="w-full h-10 px-3 rounded-xl bg-surface-dark border border-surface-border text-white font-mono font-bold text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-300 mb-1">Pago Móvil (Bs.)</label>
+                  <input id="pay-ves-input" type="number" step="10" min="0"
+                    class="w-full h-10 px-3 rounded-xl bg-surface-dark border border-surface-border text-emerald-300 font-mono font-bold text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+              </div>
+
+              <div class="flex justify-between text-xs text-slate-400 px-1">
+                <span>Equivalente recibido:</span>
+                <span id="checkout-paid-usd" class="font-mono font-bold text-white">$0.00</span>
+              </div>
+
+              <div id="checkout-change-box"></div>
+
+              <div class="flex gap-2 pt-1">
+                <button type="button" onclick="window.nexosCloseCheckout()" class="flex-1 py-2.5 rounded-xl border border-surface-border text-xs font-bold text-slate-300 hover:bg-surface-dark">Volver</button>
+                <button id="checkout-confirm-btn" type="button" onclick="window.nexosCompleteDemoSale()"
+                  class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white text-xs font-black">
+                  Emitir Ticket 80mm &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thermal Receipt Visualizer Modal -->
+          <div id="pos-receipt-modal" class="hidden absolute inset-0 z-30 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="w-full max-w-xs space-y-4">
+              <div class="thermal-paper rounded-t-lg p-4 shadow-2xl" id="thermal-receipt-body"></div>
+              <div class="flex gap-2 pt-2">
+                <button type="button" onclick="window.nexosCloseReceipt()"
+                  class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-black shadow-lg">
+                  Cerrar Vista Previa
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB PANEL 2: OFFLINE MODE SIMULATOR -->
+        <div data-suite-panel="offline" class="hidden p-6 sm:p-8 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-surface-border">
+            <div>
+              <span id="offline-sim-status" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
+                <span class="h-2 w-2 rounded-full bg-emerald-400"></span> CONECTADO · SINCRONIZACIÓN AUTOMÁTICA AL DÍA
+              </span>
+              <h3 class="text-lg font-extrabold text-white mt-3">Prueba qué pasa si se cae el internet en tu tienda</h3>
+              <p class="text-xs text-slate-400 mt-1">Desconecta el internet simulado, registra ventas y vuelve a conectar para ver la sincronización automática.</p>
+            </div>
+            <button id="offline-sim-toggle" type="button" onclick="window.nexosToggleOfflineSim()"
+              class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold transition-all shrink-0">
+              Simular Caída de Internet
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-2xl bg-surface-dark border border-surface-border space-y-3">
+              <p class="text-xs font-bold text-slate-400 uppercase">Cola de Sincronización Local</p>
+              <p class="text-3xl font-black font-mono text-white"><span id="offline-queue-count">0</span> <span class="text-xs font-normal text-slate-400">facturas en espera</span></p>
+              <button type="button" onclick="window.nexosRecordOfflineSale()"
+                class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-extrabold transition-all">
+                + Registrar Venta Ahora
+              </button>
+            </div>
+
+            <div class="md:col-span-2 p-4 rounded-2xl bg-[#07040e] border border-surface-border">
+              <p class="text-[11px] font-mono uppercase text-slate-500 mb-2">Registro de Operaciones Locales (IndexedDB):</p>
+              <div id="offline-sim-log" class="space-y-1.5 font-mono text-xs h-36 overflow-y-auto text-slate-300">
+                <p class="text-emerald-400">[Sistema] Motor Offline NEXOS listo. Catálogo y clientes respaldados en disco.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB PANEL 3: CUSTOMER CREDIT / FIAO SIMULATOR -->
+        <div data-suite-panel="fiao" class="hidden p-6 sm:p-8 space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-surface-border">
+            <div>
+              <h3 class="text-lg font-extrabold text-white">Cuentas por Cobrar Protegidas contra Devaluación</h3>
+              <p class="text-xs text-slate-400 mt-1">Edita la tasa BCV arriba en la barra de la ventana para ver cómo se recalcula automáticamente la deuda en bolívares.</p>
+            </div>
+            <span class="px-3 py-1 rounded-xl bg-brand-500/20 border border-brand-500/30 text-brand-300 text-xs font-bold">
+              Deuda fijada en USD ($)
+            </span>
+          </div>
+          <div id="fiao-demo-list" class="space-y-3"></div>
+        </div>
+
+        <!-- TAB PANEL 4: ANALYTICS & CASH CLOSING -->
+        <div data-suite-panel="analytics" class="hidden p-6 sm:p-8 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-surface-border">
+            <div>
+              <h3 class="text-lg font-extrabold text-white">Resumen Ejecutivo y Cierre de Caja Bimoneda</h3>
+              <p class="text-xs text-slate-400 mt-1">Desglose automático por cada método de pago para cuadrar en 1 minuto al cerrar la santamaría.</p>
+            </div>
+            <span class="px-3 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold">
+              Cierre Cuadrado · 0 Diferencias
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="p-4 rounded-2xl bg-surface-dark border border-surface-border">
+              <p class="text-[11px] text-slate-400 font-bold">Efectivo USD</p>
+              <p class="text-xl font-black font-mono text-emerald-400 mt-1">$185.00</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-surface-dark border border-surface-border">
+              <p class="text-[11px] text-slate-400 font-bold">Pago Móvil (Bs.)</p>
+              <p class="text-xl font-black font-mono text-white mt-1">$142.50</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-surface-dark border border-surface-border">
+              <p class="text-[11px] text-slate-400 font-bold">Zelle / Binance</p>
+              <p class="text-xl font-black font-mono text-cyan-400 mt-1">$95.00</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-surface-dark border border-brand-500/40">
+              <p class="text-[11px] text-brand-300 font-bold">Ganancia Neta Est.</p>
+              <p class="text-xl font-black font-mono text-brand-300 mt-1">+$128.40</p>
+            </div>
+          </div>
+
+          <!-- Visual Bar Breakdown -->
+          <div class="p-5 rounded-2xl bg-surface-dark border border-surface-border space-y-3">
+            <div class="flex justify-between text-xs font-bold text-slate-300">
+              <span>Distribución de Ingresos de Hoy</span>
+              <span class="font-mono text-emerald-400">Total: $422.50</span>
+            </div>
+            <div class="h-4 w-full rounded-full overflow-hidden flex bg-slate-800">
+              <div style="width: 44%" class="bg-emerald-500" title="Efectivo USD 44%"></div>
+              <div style="width: 34%" class="bg-brand-500" title="Pago Móvil Bs 34%"></div>
+              <div style="width: 22%" class="bg-cyan-500" title="Zelle & Binance 22%"></div>
+            </div>
+            <div class="flex flex-wrap gap-4 text-[11px] text-slate-400 pt-1">
+              <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span> Efectivo USD (44%)</span>
+              <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-brand-500"></span> Pago Móvil / Punto (34%)</span>
+              <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-cyan-500"></span> Zelle / Binance (22%)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BENTO SPOTLIGHT FEATURES ================= -->
+  <section id="funciones" class="py-24 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="reveal text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs uppercase font-extrabold tracking-widest text-brand-400">Arquitectura Comercial</span>
+        <h2 class="text-3xl sm:text-5xl font-black text-white mt-2">Hecho para la realidad de tu mostrador</h2>
+        <p class="text-slate-400 mt-4 text-base">Cada herramienta fue pensada para evitar pérdidas de dinero, filas lentas o descuadres al final del día.</p>
+      </div>
+
+      <!-- Bento Grid (Asymmetrical High-End Layout) -->
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-5">
+
+        <!-- Bento 1 (Large 3-col): Mixed Payment & Change -->
+        <div class="spotlight-card reveal md:col-span-3 rounded-3xl p-7 flex flex-col justify-between">
+          <div>
+            <div class="h-11 w-11 rounded-2xl bg-brand-600/20 border border-brand-500/30 text-brand-300 flex items-center justify-center mb-5">
+              <i data-lucide="coins" class="h-5 w-5"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Pagos Mixtos y Vuelto Exacto</h3>
+            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+              ¿El cliente paga $10 en billete, Bs. 500 por Pago Móvil y necesita vuelto en bolívares? NEXOS lo calcula en milisegundos sin errores de calculadora.
+            </p>
+          </div>
+          <!-- Mini Visual Widget -->
+          <div class="mt-6 p-3.5 rounded-2xl bg-surface-dark border border-white/10 font-mono text-xs space-y-1.5">
+            <div class="flex justify-between text-slate-400"><span>Cuenta:</span><span class="text-white font-bold">$12.50</span></div>
+            <div class="flex justify-between text-emerald-400"><span>Recibido ($10 + Bs. 2.500):</span><span class="font-bold">$12.79</span></div>
+            <div class="flex justify-between pt-1.5 border-t border-white/10 text-brand-300 font-bold"><span>Vuelto Exacto:</span><span>$0.29 / Bs. 259,87</span></div>
+          </div>
+        </div>
+
+        <!-- Bento 2 (Large 3-col): BCV Live & Manual Override -->
+        <div class="spotlight-card reveal delay-150 md:col-span-3 rounded-3xl p-7 flex flex-col justify-between">
+          <div>
+            <div class="h-11 w-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mb-5">
+              <i data-lucide="refresh-cw" class="h-5 w-5"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Tasa Oficial BCV al Día (o Tasa Propia)</h3>
+            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+              Sincroniza tus precios en bolívares automáticamente cada día con la tasa del BCV sin tener que reetiquetar tus estantes uno por uno.
+            </p>
+          </div>
+          <div class="mt-6 p-3.5 rounded-2xl bg-surface-dark border border-emerald-500/25 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-bold text-white">Sincronización BCV Automática</span>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-mono text-xs font-black" data-bcv-rate>896.12</span>
+          </div>
+        </div>
+
+        <!-- Bento 3 (2-col): Offline Armor -->
+        <div class="spotlight-card reveal delay-75 md:col-span-2 rounded-3xl p-7">
+          <div class="h-11 w-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-5">
+            <i data-lucide="wifi-off" class="h-5 w-5"></i>
+          </div>
+          <h3 class="text-lg font-extrabold text-white">Blindaje Sin Internet</h3>
+          <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+            Si falla CANTV, Inter o tus datos móviles, sigues facturando sin interrupciones. Todo se guarda en tu equipo.
+          </p>
+        </div>
+
+        <!-- Bento 4 (2-col): Role Permissions -->
+        <div class="spotlight-card reveal delay-150 md:col-span-2 rounded-3xl p-7">
+          <div class="h-11 w-11 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center mb-5">
+            <i data-lucide="lock" class="h-5 w-5"></i>
+          </div>
+          <h3 class="text-lg font-extrabold text-white">Cuentas Dueño vs Cajero</h3>
+          <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+            Tu cajero solo cobra en caja; nunca ve tus costos reales, márgenes de ganancia, ni puede borrar ventas.
+          </p>
+        </div>
+
+        <!-- Bento 5 (2-col): Import Excel & Barcodes -->
+        <div class="spotlight-card reveal delay-225 md:col-span-2 rounded-3xl p-7">
+          <div class="h-11 w-11 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center mb-5">
+            <i data-lucide="barcode" class="h-5 w-5"></i>
+          </div>
+          <h3 class="text-lg font-extrabold text-white">Excel Masivo &amp; Etiquetas</h3>
+          <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+            Carga 1.000 productos desde Excel en segundos y genera códigos de barra listos para imprimir en etiquetas adhesivas.
+          </p>
+        </div>
+
+        <!-- Bento 6 (2-col): Thermal Printing -->
+        <div class="spotlight-card reveal delay-75 md:col-span-2 rounded-3xl p-7 flex flex-col justify-between">
+          <div>
+            <div class="h-11 w-11 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-300 flex items-center justify-center mb-5">
+              <i data-lucide="printer" class="h-5 w-5"></i>
+            </div>
+            <h3 class="text-lg font-extrabold text-white">Recibos Térmicos 58 / 80mm</h3>
+            <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+              Imprime con tu nombre comercial, RIF, desglose bimoneda y mensaje promocional.
+            </p>
+          </div>
+          <div class="mt-5 p-3 rounded-xl bg-white/95 text-slate-900 font-mono text-[10px] leading-tight border-b-4 border-dashed border-slate-300 shadow-inner">
+            <p class="font-bold text-center">ABASTO EL SOL C.A. · J-401293</p>
+            <p class="flex justify-between mt-1"><span>TOTAL USD:</span><b>$14.50</b></p>
+            <p class="flex justify-between"><span>TASA BCV:</span><b data-bcv-rate>896.12</b></p>
+          </div>
+        </div>
+
+        <!-- Bento 7 (4-col): Fiao & Credit Anti-Devaluation -->
+        <div class="spotlight-card reveal delay-150 md:col-span-4 rounded-3xl p-7 flex flex-col justify-between">
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div class="max-w-md">
+              <div class="h-11 w-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mb-5">
+                <i data-lucide="users" class="h-5 w-5"></i>
+              </div>
+              <h3 class="text-xl font-extrabold text-white">Control de Clientes y Fiao Indexado a Dólares</h3>
+              <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                Nunca más pierdas dinero por anotar deudas en bolívares en un cuaderno. La deuda queda guardada en dólares ($) y el día que el cliente viene a pagar se liquida automáticamente a la tasa BCV vigente.
+              </p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold text-[11px] shrink-0">
+              Cero Devaluación
+            </span>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="p-3.5 rounded-2xl bg-surface-dark border border-white/10 flex items-center justify-between">
+              <div>
+                <p class="font-bold text-white">Carlos Méndez</p>
+                <p class="text-[11px] text-slate-400">Deuda fijada en divisa</p>
+              </div>
+              <span class="font-mono font-black text-amber-400 text-sm">$32.00</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-surface-dark border border-white/10 flex items-center justify-between">
+              <div>
+                <p class="font-bold text-white">Recordatorio 1 Clic</p>
+                <p class="text-[11px] text-slate-400">Envío por WhatsApp</p>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-[11px]">Enviar Estado</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 3-STEP ONBOARDING TIMELINE ================= -->
+  <section id="pasos" class="py-24 bg-surface-card/35 border-y border-white/10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 timeline-container">
+
+      <div class="reveal text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs uppercase font-extrabold tracking-widest text-brand-400">Implementación Exprés</span>
+        <h2 class="text-3xl sm:text-5xl font-black text-white mt-2">Tu tienda cobrando en menos de 5 minutos</h2>
+      </div>
+
+      <div class="relative">
+        <!-- Animated Connecting Track (Desktop) -->
+        <div class="hidden md:block absolute top-8 left-[16%] right-[16%] h-1 bg-surface-border rounded-full overflow-hidden">
+          <div class="timeline-line-fill h-full bg-gradient-to-r from-brand-500 via-purple-400 to-emerald-400"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+
+          <div class="reveal delay-75 text-center space-y-4">
+            <div class="h-16 w-16 mx-auto rounded-2xl bg-surface-dark border-2 border-brand-500 text-white font-mono text-2xl font-black flex items-center justify-center shadow-xl glow-purple">
+              01
+            </div>
+            <h3 class="text-lg font-extrabold text-white">Elige tu Plan</h3>
+            <p class="text-sm text-slate-400">
+              Arranca sin pagar nada con el <b>Plan Gratis (10 productos)</b> o activa Pro / Ultra al instante vía WhatsApp.
+            </p>
+          </div>
+
+          <div class="reveal delay-225 text-center space-y-4">
+            <div class="h-16 w-16 mx-auto rounded-2xl bg-surface-dark border-2 border-purple-400 text-white font-mono text-2xl font-black flex items-center justify-center shadow-xl">
+              02
+            </div>
+            <h3 class="text-lg font-extrabold text-white">Instala y Carga Productos</h3>
+            <p class="text-sm text-slate-400">
+              Se instala como aplicación de escritorio en tu Windows. Conectamos tu impresora térmica y pistola lectora.
+            </p>
+          </div>
+
+          <div class="reveal delay-300 text-center space-y-4">
+            <div class="h-16 w-16 mx-auto rounded-2xl bg-surface-dark border-2 border-emerald-400 text-emerald-300 font-mono text-2xl font-black flex items-center justify-center shadow-xl glow-emerald">
+              03
+            </div>
+            <h3 class="text-lg font-extrabold text-white">Controla y Multiplica Ventas</h3>
+            <p class="text-sm text-slate-400">
+              Atiende clientes el doble de rápido, olvídate de los cuadernos de fiao y haz el cierre de caja en 1 clic.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PRICING SECTION WITH DYNAMIC TOGGLES ================= -->
+  <section id="planes" class="py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="reveal text-center max-w-3xl mx-auto mb-10">
+        <span class="text-xs uppercase font-extrabold tracking-widest text-brand-400">Inversión Transparente</span>
+        <h2 class="text-3xl sm:text-5xl font-black text-white mt-2">Planes a la medida de tu comercio</h2>
+        <p class="text-slate-400 mt-3 text-base">Sin contratos forzosos. Cancela o cambia de plan cuando quieras.</p>
+      </div>
+
+      <!-- Billing Toggle & BCV Calculator Controls -->
+      <div class="reveal delay-75 flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+        <div class="inline-flex items-center p-1 rounded-2xl bg-surface-card border border-surface-border">
+          <button id="bill-monthly" type="button" onclick="window.nexosSetBilling('monthly')"
+            class="px-4 py-1.5 rounded-xl text-xs font-extrabold bg-brand-600 text-white shadow-sm transition-all">
+            Pago Mensual
+          </button>
+          <button id="bill-annual" type="button" onclick="window.nexosSetBilling('annual')"
+            class="px-4 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
+            <span>Anual</span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black">-20% DTO</span>
+          </button>
+        </div>
+
+        <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-surface-card border border-surface-border text-xs">
+          <span class="text-slate-400 font-semibold">Calculadora BCV:</span>
+          <span class="font-mono font-bold text-emerald-400">Bs.</span>
+          <input id="pricing-rate-input" type="number" step="0.01" value="896.12"
+            class="w-20 bg-surface-dark border border-surface-border rounded-lg px-2 py-1 text-emerald-300 font-mono font-bold text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+      </div>
+
+      <!-- Dynamic Pricing Cards Grid -->
+      <div id="pricing-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 pt-4 items-stretch"></div>
+
+      <!-- Expandable Full Comparison Table -->
+      <div class="reveal mt-12 text-center">
+        <button id="toggle-matrix-btn" type="button"
+          class="px-5 py-2.5 rounded-xl border border-surface-border bg-surface-card hover:bg-surface-border text-xs font-bold text-brand-300 transition-all">
+          Ver Tabla Comparativa Completa de Funciones &darr;
+        </button>
+
+        <div id="comparison-matrix-wrapper" class="hidden mt-6 rounded-3xl border border-surface-border bg-surface-card overflow-x-auto text-left">
+          <table class="w-full text-xs">
+            <thead class="bg-surface-dark text-slate-300 font-extrabold uppercase tracking-wider border-b border-surface-border">
+              <tr>
+                <th class="p-4">Característica</th>
+                <th class="p-4 text-center">Gratis ($0)</th>
+                <th class="p-4 text-center">Básico ($19)</th>
+                <th class="p-4 text-center text-brand-300">Pro ($39)</th>
+                <th class="p-4 text-center text-amber-300">Ultra ($79)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-border text-slate-300">
+              <tr>
+                <td class="p-4 font-bold text-white">Límite de Productos</td>
+                <td class="p-4 text-center font-mono">10</td>
+                <td class="p-4 text-center font-mono">100</td>
+                <td class="p-4 text-center font-bold text-emerald-400">Ilimitados</td>
+                <td class="p-4 text-center font-bold text-emerald-400">Ilimitados</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-white">Caja POS Bimoneda ($ &amp; Bs BCV)</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-white">Impresión Térmica 58mm / 80mm</td>
+                <td class="p-4 text-center text-slate-500">Ticket Pantalla</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-white">Cajas Simultáneas y Usuarios</td>
+                <td class="p-4 text-center font-mono">1 Caja / 1 Usuario</td>
+                <td class="p-4 text-center font-mono">1 Caja / 2 Usuarios</td>
+                <td class="p-4 text-center font-mono text-white">3 Cajas / 5 Usuarios</td>
+                <td class="p-4 text-center font-bold text-emerald-400">Ilimitados</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-white">Modo Sin Internet (Offline Sync)</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-white">Importar Excel &amp; Códigos de Barra</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-white">Arqueo de Caja, Gastos y Proveedores</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-bold text-white">Multi-Empresa &amp; NEXOS Copilot IA</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-slate-600">—</td>
+                <td class="p-4 text-center text-emerald-400">✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Accepted Payment Methods -->
+      <div class="reveal mt-10 p-5 rounded-2xl bg-surface-card border border-surface-border flex flex-wrap items-center justify-center gap-6 text-xs text-slate-300 font-bold">
+        <span class="text-slate-400 uppercase tracking-wider text-[11px]">Aceptamos:</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="smartphone" class="h-4 w-4 text-brand-400"></i> Pago Móvil BCV</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="landmark" class="h-4 w-4 text-cyan-400"></i> Transferencia Bs</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="dollar-sign" class="h-4 w-4 text-emerald-400"></i> Zelle USD</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="coins" class="h-4 w-4 text-amber-400"></i> Binance Pay (USDT)</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="banknote" class="h-4 w-4 text-emerald-300"></i> Efectivo USD</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FAQ ACCORDION ================= -->
+  <section id="faq" class="py-24 bg-surface-card/30 border-t border-white/10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="reveal text-center mb-14">
+        <span class="text-xs uppercase font-extrabold tracking-widest text-brand-400">Dudas Comunes</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-white mt-2">Preguntas Frecuentes</h2>
+      </div>
+
+      <div class="space-y-3.5">
+
+        <div class="faq-item reveal delay-75 rounded-2xl bg-surface-card border border-surface-border overflow-hidden">
+          <button type="button" class="faq-trigger w-full p-5 sm:p-6 flex items-center justify-between text-left gap-4">
+            <span class="text-sm sm:text-base font-bold text-white">¿Qué pasa si en mi negocio se va la luz o el internet?</span>
+            <i data-lucide="chevron-down" class="faq-chevron h-5 w-5 text-brand-400 shrink-0"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner px-5 sm:px-6 pb-5 text-sm text-slate-400 leading-relaxed">
+              Con los planes Pro y Ultra, el modo Offline almacena todo en tu computadora de forma segura. Puedes seguir cobrando, escaneando productos e imprimiendo tickets sin internet. Cuando vuelve la conexión, sincroniza todo en menos de 1 segundo.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal delay-150 rounded-2xl bg-surface-card border border-surface-border overflow-hidden">
+          <button type="button" class="faq-trigger w-full p-5 sm:p-6 flex items-center justify-between text-left gap-4">
+            <span class="text-sm sm:text-base font-bold text-white">¿Cómo funciona el Plan Gratis de 10 productos?</span>
+            <i data-lucide="chevron-down" class="faq-chevron h-5 w-5 text-brand-400 shrink-0"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner px-5 sm:px-6 pb-5 text-sm text-slate-400 leading-relaxed">
+              Es 100% gratuito y sin fecha de vencimiento. Te permite cargar hasta 10 productos, usar la caja POS bimoneda a tasa BCV, calcular vueltos exactos y registrar clientes. Cuando tu inventario supere los 10 artículos o quieras impresión térmica USB y modo offline, puedes pasar al Plan Básico o Pro conservando todos tus datos.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal delay-225 rounded-2xl bg-surface-card border border-surface-border overflow-hidden">
+          <button type="button" class="faq-trigger w-full p-5 sm:p-6 flex items-center justify-between text-left gap-4">
+            <span class="text-sm sm:text-base font-bold text-white">¿Sirve con mi impresora térmica y pistola de código de barras actual?</span>
+            <i data-lucide="chevron-down" class="faq-chevron h-5 w-5 text-brand-400 shrink-0"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner px-5 sm:px-6 pb-5 text-sm text-slate-400 leading-relaxed">
+              Sí. Funciona inmediatamente con cualquier lectora de código de barras USB/inalámbrica y cualquier impresora de tickets térmicos de 58mm u 80mm configurada en Windows. No necesitas comprar equipos especiales ni costosos.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal delay-300 rounded-2xl bg-surface-card border border-surface-border overflow-hidden">
+          <button type="button" class="faq-trigger w-full p-5 sm:p-6 flex items-center justify-between text-left gap-4">
+            <span class="text-sm sm:text-base font-bold text-white">¿Cómo instalo el sistema y recibo soporte?</span>
+            <i data-lucide="chevron-down" class="faq-chevron h-5 w-5 text-brand-400 shrink-0"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner px-5 sm:px-6 pb-5 text-sm text-slate-400 leading-relaxed">
+              Escríbenos directamente a nuestro WhatsApp <b class="text-emerald-400">0412-9062790</b>. Te acompañamos paso a paso para dejarlo instalado como aplicación de escritorio en tu computadora en menos de 5 minutos.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="reveal py-20 relative overflow-hidden bg-gradient-to-r from-brand-950 via-[#2a125e] to-indigo-950 border-t border-brand-500/30 text-center">
+    <div class="pointer-events-none absolute inset-0 bg-grid-architect opacity-50"></div>
+    <div class="max-w-4xl mx-auto px-4 relative z-10">
+      <h2 class="text-3xl sm:text-5xl font-black text-white">Moderniza tu mostrador hoy mismo</h2>
+      <p class="mt-4 text-purple-100/85 text-base max-w-2xl mx-auto">
+        Deja atrás las libretas y las calculadoras lentas. Empieza gratis o agenda una instalación rápida en tu computadora hoy.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#planes" class="btn-shimmer w-full sm:w-auto px-8 py-4 rounded-2xl bg-white text-brand-950 font-black text-sm sm:text-base shadow-2xl hover:scale-105 transition-transform">
+          Empezar con Plan Gratis (10 Productos)
+        </a>
+        <a href="https://wa.me/584129062790?text=Hola,%20quiero%20instalar%20el%20sistema%20NEXOS%20en%20mi%20negocio" target="_blank"
+          class="w-full sm:w-auto px-8 py-4 rounded-2xl border border-emerald-400/50 bg-emerald-500/15 hover:bg-emerald-500/25 text-white font-extrabold text-sm sm:text-base transition-all flex items-center justify-center gap-2">
+          <i data-lucide="message-circle" class="h-5 w-5 text-emerald-400"></i>
+          <span>WhatsApp Directo: 0412-9062790</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-surface-dark border-t border-white/10 pt-12 pb-24 sm:py-12 text-slate-400 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <img src="assets/nexos-icon.png" alt="Logo NEXOS" class="h-9 w-9 rounded-xl shadow-md object-cover">
+        <span class="font-extrabold text-sm text-white">NEXOS</span>
+        <span>&middot; Punto de Venta &amp; Gestión Comercial</span>
+      </div>
+
+      <p class="text-center text-slate-400">
+        &copy; 2026 NEXOS &middot; Creado por <strong class="text-white">Diego Coroba</strong>. Todos los derechos reservados.
+      </p>
+
+      <div class="flex items-center gap-5">
+        <a href="#planes" class="hover:text-white transition-colors">Planes</a>
+        <a href="#demo" class="hover:text-white transition-colors">Simulador</a>
+        <a href="https://wa.me/584129062790" target="_blank" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1.5">
+          <i data-lucide="phone" class="h-3.5 w-3.5"></i>
+          <span>+58 412-906-2790</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= FLOATING WHATSAPP WIDGET ================= -->
+  <div id="floating-wa" class="fixed bottom-6 right-5 sm:right-7 z-50 transition-all duration-500 translate-y-24 opacity-0 pointer-events-none">
+    <a href="https://wa.me/584129062790?text=Hola,%20vi%20la%20pagina%20de%20NEXOS%20y%20quiero%20informacion%20para%20mi%20negocio" target="_blank"
+      class="flex items-center gap-3 px-4 py-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black shadow-2xl transition-all hover:scale-105 pulse-whatsapp group"
+      aria-label="Contactar por WhatsApp">
+      <i data-lucide="message-circle" class="h-6 w-6 fill-current"></i>
+      <span class="hidden sm:inline text-xs font-extrabold tracking-tight">
+        Asesoría WhatsApp · 0412-9062790
+      </span>
+    </a>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
